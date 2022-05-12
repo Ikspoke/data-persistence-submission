@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.IO;
 
 public class MainManager : MonoBehaviour
 {
@@ -37,6 +38,8 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        
+        LoadScore();
 
         if (SaveData.Instance.bestScore > 0)
         {
@@ -80,13 +83,44 @@ public class MainManager : MonoBehaviour
         if(SaveData.Instance != null && m_Points > SaveData.Instance.bestScore)
         {
             SaveData.Instance.bestScore = m_Points;
+            SaveScore();
         }
-        BestScoreText.text = $"Best Score : {SaveData.Instance.PlayerName} : {SaveData.Instance.bestScore}";
+        BestScoreText.text = $"Best Score : {SaveData.Instance.BestPlayer} : {SaveData.Instance.bestScore}";
     }
 
     public void GameOver()
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+    }
+
+    [System.Serializable]
+    class SaveHighScore
+    {
+        public string playerName;
+        public int bestScore;
+    }
+
+    public void SaveScore()
+    {
+        SaveHighScore data = new SaveHighScore();
+        data.playerName = SaveData.Instance.PlayerName;
+        data.bestScore = SaveData.Instance.bestScore;
+
+        string json = JsonUtility.ToJson(data);
+        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+    }
+
+    public void LoadScore()
+    {
+        string path = Application.persistentDataPath + "/savefile.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            SaveHighScore data = JsonUtility.FromJson<SaveHighScore>(json);
+
+            SaveData.Instance.BestPlayer = data.playerName;
+            SaveData.Instance.bestScore = data.bestScore;
+        }
     }
 }

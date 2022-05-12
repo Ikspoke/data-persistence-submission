@@ -9,6 +9,7 @@ public class SaveData : MonoBehaviour
 
     public InputField inputPlayerName;
     public string PlayerName;
+    public string BestPlayer;
     public int bestScore;
 
     private void Awake()
