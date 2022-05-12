@@ -83,6 +83,7 @@ public class MainManager : MonoBehaviour
         if(SaveData.Instance != null && m_Points > SaveData.Instance.bestScore)
         {
             SaveData.Instance.bestScore = m_Points;
+            SaveData.Instance.BestPlayer = SaveData.Instance.PlayerName;
             SaveScore();
         }
         BestScoreText.text = $"Best Score : {SaveData.Instance.BestPlayer} : {SaveData.Instance.bestScore}";
